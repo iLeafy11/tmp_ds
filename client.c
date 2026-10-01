@@ -1,7 +1,6 @@
 #include "client.h"
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -13,13 +12,10 @@
  */
 static char last_error[PATH_MAX + 128];
 
-static void set_error(const char *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    vsnprintf(last_error, sizeof(last_error), fmt, ap);
-    va_end(ap);
-}
+/* A macro, so each use is a direct snprintf call and the compiler checks its format against its
+ * arguments.
+ */
+#define set_error(...) snprintf(last_error, sizeof(last_error), __VA_ARGS__)
 
 const char *client_error(void)
 {
